@@ -1,0 +1,18 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" ctype="Workspace" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="ImageTagger/MainWindow.cs" ctype="Workbench">
+    <Files>
+      <File FileName="ImageTagger/MainWindow.cs" Line="109" Column="56" />
+      <File FileName="ImageTagger/ToDo.txt" Line="3" Column="1" />
+      <File FileName="ImageTagger/ThumpnailButton.cs" Line="11" Column="31" />
+      <File FileName="ImageTagger/ImageHelper.cs" Line="35" Column="29" />
+      <File FileName="ImageTagger/Main.cs" Line="1" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore>
+      <Breakpoint file="/home/local/Projects/ImageTagger/ImageTagger/MainWindow.cs" line="150" />
+    </BreakpointStore>
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches ctype="PinnedWatchStore" />
+</Properties>
