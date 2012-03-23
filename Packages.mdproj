@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ItemType>PackagingProject</ItemType>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{89DC964E-EF8C-42AF-A390-7A36A63FCA0B}</ProjectGuid>
+    <Packages>
+      <Packages>
+        <Package name="Linux Binärdateien">
+          <Builder targetFile="Image-Tagger-WinForms-linux.tar.gz" platform="Linux" configuration="Debug|x86" ctype="BinariesZipPackageBuilder">
+            <ChildEntries>
+              <SolutionItemReference path="Image-Tagger-WinForms\Image-Tagger-WinForms.csproj" />
+            </ChildEntries>
+            <RootEntry path="Image-Tagger-WinForms.sln" id=":root:" />
+          </Builder>
+        </Package>
+        <Package name="Microsoft Windows Binärdateien">
+          <Builder targetFile="Image-Tagger-WinForms-windows.tar.gz" platform="Windows" configuration="Debug|x86" ctype="BinariesZipPackageBuilder">
+            <ChildEntries>
+              <SolutionItemReference path="Image-Tagger-WinForms\Image-Tagger-WinForms.csproj" />
+            </ChildEntries>
+            <RootEntry path="Image-Tagger-WinForms.sln" id=":root:" />
+          </Builder>
+        </Package>
+        <Package name="Tarball">
+          <Builder TargetDirectory="Image-Tagger-WinForms" DefaultConfiguration="Debug|x86" ctype="TarballDeployTarget">
+            <ChildEntries>
+              <SolutionItemReference path="Image-Tagger-WinForms\Image-Tagger-WinForms.csproj" />
+            </ChildEntries>
+            <RootEntry path="Image-Tagger-WinForms.sln" id=":root:" />
+          </Builder>
+        </Package>
+      </Packages>
+    </Packages>
+  </PropertyGroup>
+</Project>
