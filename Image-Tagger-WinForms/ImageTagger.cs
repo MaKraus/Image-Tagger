@@ -7,41 +7,48 @@ namespace ImageTaggerWinForms
 {
 	public class ImageTagger : Form
 	{
+        private System.ComponentModel.IContainer components = null;
+
 		PictureBox mainImage = new PictureBox();
-		
-		public static void Main ()
-		{
-			Application.Run (new ImageTagger ());
-		}
 
 		public ImageTagger ()
 		{
-			this.SuspendLayout();
-			
 			// Window properties
-			this.Width = 800;
+            this.components = new System.ComponentModel.Container();
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Width = 800;
 			this.Height = 800;
 			this.Text = "Image-Tagger Playground";
 			
 			// left/right Splitcontainer 
 			SplitContainer leftRightSplitter = new SplitContainer();
-			Controls.Add(leftRightSplitter);
-			leftRightSplitter.SuspendLayout();
-			leftRightSplitter.Dock = DockStyle.Fill;
-			leftRightSplitter.IsSplitterFixed = true;
+            leftRightSplitter.Dock = DockStyle.Fill;
+			this.Controls.Add(leftRightSplitter);
 						
 			// Panel 1
 			leftRightSplitter.Panel1MinSize = 210;
+            leftRightSplitter.SplitterDistance = 210;
 			leftRightSplitter.Panel1.BackColor = Color.AntiqueWhite;
 			FlowLayoutPanel imageList = new FlowLayoutPanel();
 			imageList.FlowDirection = FlowDirection.LeftToRight;
-			
-			
-			imageList.SuspendLayout();
+						
 			imageList.Dock = DockStyle.Fill;
 			imageList.AutoScroll = true;
-			
-			DirectoryInfo imageDir = new DirectoryInfo("/storage/bilder/Digicam Nachbearbeitet/");
+
+            String path = "";
+            FolderBrowserDialog dialog = new FolderBrowserDialog();
+            var dialogResult = dialog.ShowDialog();
+
+            if (dialogResult == DialogResult.OK)
+            {
+                path = dialog.SelectedPath;
+            }
+            else
+            {
+                this.Close();
+            }
+
+            DirectoryInfo imageDir = new DirectoryInfo(path);
 			var files = imageDir.GetFiles("*", SearchOption.AllDirectories);
 			
 			foreach(var file in files)
@@ -68,9 +75,6 @@ namespace ImageTaggerWinForms
 			mainImage.SizeMode = PictureBoxSizeMode.Zoom;
 						
 			leftRightSplitter.Panel2.Controls.Add(mainImage);
-						
-			leftRightSplitter.ResumeLayout(false);
-			this.ResumeLayout(false);
 		}
 
 		void HandleImage1Click (object sender, EventArgs e)
