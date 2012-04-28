@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -6,7 +6,7 @@
     <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{94EC285A-8F7E-4699-8630-2FE9467778D7}</ProjectGuid>
-   <OutputType>WinExe</OutputType>
+    <OutputType>WinExe</OutputType>
     <RootNamespace>ImageTaggerWinForms</RootNamespace>
     <AssemblyName>Image-Tagger-WinForms</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
@@ -54,7 +54,7 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
- <ItemGroup>
+  <ItemGroup>
     <Content Include="app.desktop" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
@@ -64,6 +64,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Program.cs" />
+    <Compile Include="ImageBrowser.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
