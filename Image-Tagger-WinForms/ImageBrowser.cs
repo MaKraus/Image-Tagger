@@ -11,6 +11,8 @@ namespace ImageTaggerWinForms
 		// The event  
 		public event ImageClickHandler ImageClick;
 
+		protected PictureBox CurrentPictureBox { get; set; }
+
 		public ImageBrowser ()
 		{
 		}
@@ -18,9 +20,10 @@ namespace ImageTaggerWinForms
 		// The method which fires the Event  
 		protected void OnImageClick (object sender, EventArgs ignored)
 		{
-			var pictureBox = (PictureBox) sender;
+			var pictureBox = (PictureBox)sender;
+			CurrentPictureBox = pictureBox;
 			
-			var data = new ImageClickEventArgs(pictureBox.Image, pictureBox.Image.Tag as ImageInformation);
+			var data = new ImageClickEventArgs (pictureBox.Image, pictureBox.Image.Tag as ImageInformation);
 			// Check if there are any Subscribers  
 			if (ImageClick != null) {
 				// Call the Event  
@@ -44,7 +47,29 @@ namespace ImageTaggerWinForms
 			this.Controls.Clear ();
 		}
 
-		public PictureBox CreatePictureBox (Image image, int width, int height)
+		public void Next ()
+		{
+			var pictureBox = CurrentPictureBox;
+			var currentIndex = this.Controls.IndexOf (pictureBox);
+			
+			if (currentIndex != -1 && currentIndex < this.Controls.Count - 1) {
+				var newPictureBox = this.Controls[currentIndex + 1];
+				OnImageClick (newPictureBox, null);
+			}
+		}
+
+		public void Previous ()
+		{
+			var pictureBox = CurrentPictureBox;
+			var currentIndex = this.Controls.IndexOf (pictureBox);
+			
+			if (currentIndex != -1 && currentIndex > 0) {
+				var newPictureBox = this.Controls[currentIndex - 1];
+				OnImageClick (newPictureBox, null);
+			}
+		}
+
+		protected PictureBox CreatePictureBox (Image image, int width, int height)
 		{
 			PictureBox pictureBox = new PictureBox ();
 			pictureBox.Width = width;
@@ -55,7 +80,7 @@ namespace ImageTaggerWinForms
 			return pictureBox;
 		}
 
-		public Image CreateThumbnail (String path, int width, int height)
+		protected Image CreateThumbnail (String path, int width, int height)
 		{
 			Image fullSizeImage = new Bitmap (path);
 			Image scaledImage = new Bitmap (fullSizeImage, width, height);
@@ -75,6 +100,6 @@ namespace ImageTaggerWinForms
 			this.Thumbnail = thumbnail;
 			this.Information = information;
 		}
-	}	
+	}
 }
 

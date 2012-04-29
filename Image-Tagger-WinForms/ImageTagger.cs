@@ -33,8 +33,11 @@ namespace ImageTaggerWinForms
 			this.Height = 800;
 			this.Text = "Image-Tagger Playground";
 			
+			this.KeyPreview = true;
+			this.KeyPress += new KeyPressEventHandler(HandleKeyPress);
+			
 			// Create Menu
-			CreateMenuStrip();
+			CreateMenuStrip ();
 			
 			// left/right Splitcontainer 
 			SplitContainer leftRightSplitter = new SplitContainer ();
@@ -59,6 +62,23 @@ namespace ImageTaggerWinForms
 			mainImage.SizeMode = PictureBoxSizeMode.Zoom;
 			
 			leftRightSplitter.Panel2.Controls.Add (mainImage);
+		}
+
+		private void HandleKeyPress (Object sender, KeyPressEventArgs e)
+		{
+			// The keypressed method uses the KeyChar property to check 
+			// whether the ENTER key is pressed.  
+			
+			// If the ENTER key is pressed, the Handled property is set to true, 
+			// to indicate the event is handled.
+			if (e.KeyChar == 'a' || e.KeyChar == 'A') {
+				imageBrowser.Previous();
+				e.Handled = true;
+			}
+			else if (e.KeyChar == 'd' || e.KeyChar == 'D') {
+				imageBrowser.Next();
+				e.Handled = true;
+			}
 		}
 
 		protected void CreateMenuStrip ()

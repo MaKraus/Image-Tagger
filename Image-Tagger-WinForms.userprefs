@@ -1,14 +1,17 @@
 ﻿<Properties>
   <AuthorInfo Name="MaKraus &amp; Contributors" Email="" Copyright="" ctype="AuthorInformation" />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" ctype="Workspace" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Image-Tagger-WinForms/ImageTagger.cs" ctype="Workbench">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Image-Tagger-WinForms/ImageBrowser.cs" ctype="Workbench">
     <Files>
-      <File FileName="Image-Tagger-WinForms/ImageTagger.cs" Line="56" Column="4" />
-      <File FileName="Image-Tagger-WinForms/ImageBrowser.cs" Line="33" Column="10" />
+      <File FileName="Image-Tagger-WinForms/ImageTagger.cs" Line="61" Column="36" />
+      <File FileName="Image-Tagger-WinForms/ImageBrowser.cs" Line="39" Column="67" />
+      <File FileName="Image-Tagger-WinForms/Program.cs" Line="20" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches ctype="PinnedWatchStore" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches ctype="PinnedWatchStore">
+    <Watch file="Image-Tagger-WinForms/ImageTagger.cs" line="78" offsetX="462" offsetY="1309" expression="Keys" liveUpdate="False" />
+  </MonoDevelop.Ide.DebuggingService.PinnedWatches>
 </Properties>
