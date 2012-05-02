@@ -2,9 +2,10 @@ using System;
 using System.Windows.Forms;
 using System.Drawing;
 using System.IO;
+using System.Collections.Generic;
 namespace ImageTaggerWinForms
 {
-	public class ImageBrowser : FlowLayoutPanel
+	public class ImageBrowser : Control
 	{
 		// Delegate  
 		public delegate void ImageClickHandler (object sender, ImageClickEventArgs data);
@@ -12,9 +13,34 @@ namespace ImageTaggerWinForms
 		public event ImageClickHandler ImageClick;
 
 		protected PictureBox CurrentPictureBox { get; set; }
-
+		protected TableLayoutPanel layoutPanel = new TableLayoutPanel();
+		
+		protected List<PictureBox> imageBoxes = new List<PictureBox>();
+		public int imagesPerPage { get; protected set; }		
+		public int currentPage { get; protected set; }
+		public int maxPage 
+		{ 
+			get
+			{
+				int imageCount = imageBoxes.Count;
+				
+				if(imageCount <= imagesPerPage)
+				{
+					return 1;	
+				}
+				
+				return ((imageCount -1) / imagesPerPage) + 1;
+			}
+		}
+			
 		public ImageBrowser ()
 		{
+			layoutPanel.Dock = DockStyle.Fill;
+			this.Controls.Add(layoutPanel);
+			
+			//Default Values
+			imagesPerPage = 5;
+			currentPage = 0;
 		}
 
 		// The method which fires the Event  
@@ -39,36 +65,97 @@ namespace ImageTaggerWinForms
 			var thumbnail = CreateThumbnail (file.FullName, width, height);
 			var pictureBox = CreatePictureBox (thumbnail, width, height);
 			
-			this.Controls.Add (pictureBox);
+			imageBoxes.Add (pictureBox);
+			
+			if(layoutPanel.Controls.Count < imagesPerPage)
+			{
+				layoutPanel.Controls.Add(pictureBox);	
+			}
 		}
 
 		public void Clear ()
 		{
-			this.Controls.Clear ();
+			imageBoxes.Clear ();
+			layoutPanel.Controls.Clear();
+			currentPage = 1;
 		}
 
-		public void Next ()
+		public void NextImage ()
 		{
 			var pictureBox = CurrentPictureBox;
-			var currentIndex = this.Controls.IndexOf (pictureBox);
+			var currentIndex = imageBoxes.IndexOf (pictureBox);
 			
-			if (currentIndex != -1 && currentIndex < this.Controls.Count - 1) {
-				var newPictureBox = this.Controls[currentIndex + 1];
+			if (currentIndex != -1 && currentIndex < imageBoxes.Count - 1) {
+				var newPictureBox = imageBoxes[currentIndex + 1];
+				OnImageClick (newPictureBox, null);
+			}
+			else if(currentIndex == -1 && imageBoxes.Count > 0)
+			{
+				var newPictureBox = imageBoxes[0];
 				OnImageClick (newPictureBox, null);
 			}
 		}
 
-		public void Previous ()
+		public void PreviousImage ()
 		{
 			var pictureBox = CurrentPictureBox;
-			var currentIndex = this.Controls.IndexOf (pictureBox);
+			var currentIndex = imageBoxes.IndexOf (pictureBox);
 			
 			if (currentIndex != -1 && currentIndex > 0) {
-				var newPictureBox = this.Controls[currentIndex - 1];
+				var newPictureBox = imageBoxes[currentIndex - 1];
+				OnImageClick (newPictureBox, null);
+			}
+			else if(currentIndex == -1 && imageBoxes.Count > 0)
+			{
+				var newPictureBox = imageBoxes[0];
 				OnImageClick (newPictureBox, null);
 			}
 		}
 
+		public void NextPage()
+		{
+			if(currentPage + 1 < maxPage)
+			{
+				return;	
+			}
+			
+			int newPage = currentPage + 1;
+			SwitchPage(newPage);			
+		}
+		
+		public void PreviousPage()
+		{
+			if(currentPage - 1 <= 0)
+			{
+				return;	
+			}
+			
+			int newPage = currentPage -1;
+			SwitchPage(newPage);
+		}
+		
+		public void SwitchPage(int page)
+		{
+			if(page <= 0 || page > maxPage)
+			{
+				return;
+			}
+			
+			this.Controls.Clear();
+			var newImages = GetImagesForPage(page).ToArray();
+			this.Controls.AddRange(newImages);
+			if(newImages.Length > 0)
+			{
+				OnImageClick (newImages[0], null);
+			}
+		}
+		
+		protected List<PictureBox> GetImagesForPage(int page)
+		{
+			int firstIndex = (page - 1) * 5;
+			return imageBoxes.GetRange(firstIndex, imagesPerPage);
+		}
+		
 		protected PictureBox CreatePictureBox (Image image, int width, int height)
 		{
 			PictureBox pictureBox = new PictureBox ();

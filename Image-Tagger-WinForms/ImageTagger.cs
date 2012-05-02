@@ -29,8 +29,8 @@ namespace ImageTaggerWinForms
 			// Window properties
 			this.components = new System.ComponentModel.Container ();
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Width = 800;
-			this.Height = 800;
+			this.Width = 1200;
+			this.Height = 850;
 			this.Text = "Image-Tagger Playground";
 			
 			this.KeyPreview = true;
@@ -51,9 +51,7 @@ namespace ImageTaggerWinForms
 			
 			// Init ImageBrowser
 			imageBrowser = new ImageBrowser ();
-			imageBrowser.FlowDirection = FlowDirection.LeftToRight;
 			imageBrowser.Dock = DockStyle.Fill;
-			imageBrowser.AutoScroll = true;
 			leftRightSplitter.Panel1.Controls.Add (imageBrowser);
 			imageBrowser.ImageClick += HandleImage1Click;
 			
@@ -71,12 +69,20 @@ namespace ImageTaggerWinForms
 			
 			// If the ENTER key is pressed, the Handled property is set to true, 
 			// to indicate the event is handled.
-			if (e.KeyChar == 'a' || e.KeyChar == 'A') {
-				imageBrowser.Previous();
+			if (e.KeyChar == 'w') {
+				imageBrowser.PreviousImage();
 				e.Handled = true;
 			}
-			else if (e.KeyChar == 'd' || e.KeyChar == 'D') {
-				imageBrowser.Next();
+			else if (e.KeyChar == 's') {
+				imageBrowser.NextImage();
+				e.Handled = true;
+			}
+			else if (e.KeyChar == 'a') {
+				imageBrowser.PreviousPage();
+				e.Handled = true;
+			}
+			else if (e.KeyChar == 'd') {
+				imageBrowser.NextPage();
 				e.Handled = true;
 			}
 		}
