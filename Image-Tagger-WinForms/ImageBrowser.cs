@@ -13,12 +13,11 @@ namespace ImageTaggerWinForms
 		public event ImageClickHandler ImageClick;
 
 		protected PictureBox CurrentPictureBox { get; set; }
-		protected TableLayoutPanel layoutPanel = new TableLayoutPanel();
+		protected FlowLayoutPanel layoutPanel = new FlowLayoutPanel();
 		
 		protected List<PictureBox> imageBoxes = new List<PictureBox>();
 		public int imagesPerPage { get; protected set; }		
-		public int currentPage { get; protected set; }
-		public int maxPage 
+		public int MaxPage 
 		{ 
 			get
 			{
@@ -40,7 +39,6 @@ namespace ImageTaggerWinForms
 			
 			//Default Values
 			imagesPerPage = 5;
-			currentPage = 0;
 		}
 
 		// The method which fires the Event  
@@ -48,6 +46,8 @@ namespace ImageTaggerWinForms
 		{
 			var pictureBox = (PictureBox)sender;
 			CurrentPictureBox = pictureBox;
+			
+			updateOverview();
 			
 			var data = new ImageClickEventArgs (pictureBox.Image, pictureBox.Image.Tag as ImageInformation);
 			// Check if there are any Subscribers  
@@ -57,6 +57,35 @@ namespace ImageTaggerWinForms
 			}
 		}
 
+		protected void updateOverview()
+		{
+			layoutPanel.SuspendLayout();
+			
+			var currentIndex = imageBoxes.IndexOf (CurrentPictureBox);
+			int lastValidIndex = imageBoxes.Count -1;
+			int previewImageCount = (int) (imagesPerPage / 2);
+			int firstImageIndex = currentIndex - previewImageCount;
+			int lastImageIndex = currentIndex + previewImageCount;
+			
+			layoutPanel.Controls.Clear();
+			for(int i = firstImageIndex; i <= lastImageIndex; i++)
+			{
+				if( i < 0 || i > lastValidIndex)
+				{
+					if(lastImageIndex + 1 <= lastValidIndex)
+					{
+						// Make sure that as much thumbnails are displayed as possible
+						lastImageIndex++;
+					}
+					continue;
+				}
+				
+				layoutPanel.Controls.Add(imageBoxes[i]);
+			}			
+			
+			layoutPanel.ResumeLayout();
+		}
+		
 		public void Add (FileInfo file)
 		{
 			int width = 200;
@@ -77,7 +106,7 @@ namespace ImageTaggerWinForms
 		{
 			imageBoxes.Clear ();
 			layoutPanel.Controls.Clear();
-			currentPage = 1;
+			CurrentPictureBox = null;
 		}
 
 		public void NextImage ()
@@ -112,48 +141,36 @@ namespace ImageTaggerWinForms
 			}
 		}
 
-		public void NextPage()
-		{
-			if(currentPage + 1 < maxPage)
-			{
-				return;	
-			}
-			
-			int newPage = currentPage + 1;
-			SwitchPage(newPage);			
-		}
-		
 		public void PreviousPage()
 		{
-			if(currentPage - 1 <= 0)
+			var currentIndex = imageBoxes.IndexOf(CurrentPictureBox);
+			
+			if(currentIndex  - imagesPerPage >= 0)
 			{
-				return;	
+				CurrentPictureBox = imageBoxes[currentIndex - imagesPerPage];
+			}
+			else
+			{
+				CurrentPictureBox = imageBoxes[0];	
 			}
 			
-			int newPage = currentPage -1;
-			SwitchPage(newPage);
+			OnImageClick (CurrentPictureBox, null);
 		}
 		
-		public void SwitchPage(int page)
+		public void NextPage()
 		{
-			if(page <= 0 || page > maxPage)
+			var currentIndex = imageBoxes.IndexOf (CurrentPictureBox);
+			
+			if(currentIndex  + imagesPerPage < imageBoxes.Count -1)
 			{
-				return;
+				CurrentPictureBox = imageBoxes[currentIndex + imagesPerPage];
+			}
+			else
+			{
+				CurrentPictureBox = imageBoxes[imageBoxes.Count-1];	
 			}
 			
-			this.Controls.Clear();
-			var newImages = GetImagesForPage(page).ToArray();
-			this.Controls.AddRange(newImages);
-			if(newImages.Length > 0)
-			{
-				OnImageClick (newImages[0], null);
-			}
-		}
-		
-		protected List<PictureBox> GetImagesForPage(int page)
-		{
-			int firstIndex = (page - 1) * 5;
-			return imageBoxes.GetRange(firstIndex, imagesPerPage);
+			OnImageClick (CurrentPictureBox, null);
 		}
 		
 		protected PictureBox CreatePictureBox (Image image, int width, int height)
