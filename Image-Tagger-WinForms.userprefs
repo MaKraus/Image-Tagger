@@ -1,11 +1,12 @@
 ﻿<Properties>
   <AuthorInfo Name="MaKraus &amp; Contributors" Email="" Copyright="" ctype="AuthorInformation" />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" ctype="Workspace" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Image-Tagger-WinForms/ImageBrowser.cs" ctype="Workbench">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Image-Tagger-WinForms/ImageTagger.cs" ctype="Workbench">
     <Files>
-      <File FileName="Image-Tagger-WinForms/ImageTagger.cs" Line="86" Column="22" />
-      <File FileName="Image-Tagger-WinForms/ImageBrowser.cs" Line="77" Column="65" />
+      <File FileName="Image-Tagger-WinForms/ImageTagger.cs" Line="149" Column="25" />
+      <File FileName="Image-Tagger-WinForms/ImageBrowser.cs" Line="77" Column="69" />
       <File FileName="Image-Tagger-WinForms/Program.cs" Line="20" Column="1" />
+      <File FileName="Image-Tagger-WinForms/ImageInformation.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
