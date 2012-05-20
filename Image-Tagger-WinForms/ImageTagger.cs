@@ -94,13 +94,28 @@ namespace ImageTaggerWinForms
 			this.Controls.Add (MainMenu);
 			
 			// File Menu
-			ToolStripMenuItem File = new ToolStripMenuItem ("File");
-			MainMenu.Items.Add (File);
+			ToolStripMenuItem file = new ToolStripMenuItem ("File");
+			MainMenu.Items.Add (file);
 			
 			ToolStripMenuItem OpenDirectory = new ToolStripMenuItem ("Open Directory");
 			OpenDirectory.Click += new EventHandler (OpenDirectory_Click);
-			File.DropDownItems.Add (OpenDirectory);
+			file.DropDownItems.Add (OpenDirectory);
 			
+			// About Menu
+			ToolStripMenuItem about = new ToolStripMenuItem("About");
+			MainMenu.Items.Add(about);
+
+			ToolStripMenuItem feedback = new ToolStripMenuItem("Feedback / Bugreport");
+			feedback.Click += new EventHandler(OpenFeedback_Click);
+			about.DropDownItems.Add(feedback);
+			
+			ToolStripMenuItem source = new ToolStripMenuItem("Source");
+			source.Click += new EventHandler(OpenSource_Click);
+			about.DropDownItems.Add(source);
+			
+			ToolStripMenuItem licence = new ToolStripMenuItem("Licence");
+			licence.Click += new EventHandler(OpenLicence_Click);
+			about.DropDownItems.Add(licence);
 		}
 
 		void OpenDirectory_Click (object sender, EventArgs e)
@@ -129,6 +144,55 @@ namespace ImageTaggerWinForms
 			}
 		}
 
+		void OpenFeedback_Click (object sender, EventArgs e)
+		{
+			String feedbackText =
+@"I'm happy to get feedback about this product. 
+Please use the issue managment at gitHub to fill in your feedback and bugreports.
+https://github.com/MaKraus/Image-Tagger";
+			
+			MessageBox.Show(feedbackText, "Feedback / Bugreport");
+		}
+		
+		void OpenSource_Click (object sender, EventArgs e)
+		{
+			String sourceText =
+@"Image-Tagger source code may be picked up at github. 
+Please feel free to contribute.
+https://github.com/MaKraus/Image-Tagger";
+			
+			MessageBox.Show(sourceText, "Image-Tagger source code (gitHub)");
+		}
+		
+		void OpenLicence_Click (object sender, EventArgs e)
+		{
+			String licenceText = 
+@"Copyright (c) 2012, MaKraus & Contributors
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met: 
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer. 
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution. 
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS' AND
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+";
+			MessageBox.Show(licenceText, "Image-Tagger licence (BSD-2-Clause)");	
+		}
+		
 		public bool CheckExtension (String extension)
 		{
 			String lowerExtension = extension.ToLower ();
