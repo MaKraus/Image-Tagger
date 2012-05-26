@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
+using System.Collections.Generic;
 
 namespace ImageTaggerWinForms
 {
@@ -9,6 +10,8 @@ namespace ImageTaggerWinForms
 	{
 		private System.ComponentModel.IContainer components = null;
 
+		Configuration config = new Configuration();
+		
 		ImageBrowser imageBrowser;
 		PictureBox mainImage = new PictureBox ();
 
@@ -26,6 +29,9 @@ namespace ImageTaggerWinForms
 
 		public ImageTagger ()
 		{
+			// Configuration
+			config = GetDefaultConfiguration();
+			
 			// Window properties
 			this.components = new System.ComponentModel.Container ();
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -61,32 +67,27 @@ namespace ImageTaggerWinForms
 			
 			leftRightSplitter.Panel2.Controls.Add (mainImage);
 		}
-
-		private void HandleKeyPress (Object sender, KeyPressEventArgs e)
+		
+		public Configuration GetDefaultConfiguration()
 		{
-			// The keypressed method uses the KeyChar property to check 
-			// whether the ENTER key is pressed.  
-			
-			// If the ENTER key is pressed, the Handled property is set to true, 
-			// to indicate the event is handled.
-			if (e.KeyChar == 'w') {
-				imageBrowser.PreviousImage();
-				e.Handled = true;
-			}
-			else if (e.KeyChar == 's') {
-				imageBrowser.NextImage();
-				e.Handled = true;
-			}
-			else if (e.KeyChar == 'a') {
-				imageBrowser.PreviousPage();
-				e.Handled = true;
-			}
-			else if (e.KeyChar == 'd') {
-				imageBrowser.NextPage();
-				e.Handled = true;
-			}
+			var config = new Configuration()
+			{
+				CheckExtensionsCaseSensitive = false,
+				ValidExtensions = new List<String>()
+				{
+					".jpg", ".jpeg", ".png", ".tiff", ".gif"
+				},
+				Navigation = new ConfigurationNavigation()
+				{
+					PreviousImage = 'a',
+					NextImage = 'd',
+					PreviousPage = 'w',
+					NextPage = 's'
+				}
+			};
+			return config;
 		}
-
+		
 		protected void CreateMenuStrip ()
 		{
 			// Main Menu
@@ -100,6 +101,30 @@ namespace ImageTaggerWinForms
 			ToolStripMenuItem OpenDirectory = new ToolStripMenuItem ("Open Directory");
 			OpenDirectory.Click += new EventHandler (OpenDirectory_Click);
 			file.DropDownItems.Add (OpenDirectory);
+			
+			ToolStripMenuItem LoadConfiguration = new ToolStripMenuItem ("Load Configuration");
+			LoadConfiguration.Click += new EventHandler (LoadConfiguration_Click);
+			file.DropDownItems.Add (LoadConfiguration);
+			
+			ToolStripMenuItem SaveConfiguration = new ToolStripMenuItem ("Save Configuration");
+			SaveConfiguration.Click += new EventHandler (SaveConfiguration_Click);
+			file.DropDownItems.Add (SaveConfiguration);
+			
+			// Navigation Menu
+			ToolStripMenuItem navigation = new ToolStripMenuItem("Navigation");
+			MainMenu.Items.Add(navigation);
+			
+			ToolStripMenuItem previousImage = new ToolStripMenuItem("Previous Image");
+			navigation.DropDownItems.Add(previousImage);
+			
+			ToolStripMenuItem nextImage = new ToolStripMenuItem("Next Image");
+			navigation.DropDownItems.Add(nextImage);
+			
+			ToolStripMenuItem previousPage = new ToolStripMenuItem("Previous Page");
+			navigation.DropDownItems.Add(previousPage);
+			
+			ToolStripMenuItem nextPage = new ToolStripMenuItem("Next Page");
+			navigation.DropDownItems.Add(nextPage);
 			
 			// About Menu
 			ToolStripMenuItem about = new ToolStripMenuItem("About");
@@ -118,6 +143,8 @@ namespace ImageTaggerWinForms
 			about.DropDownItems.Add(licence);
 		}
 
+		#region File menu handler
+		
 		void OpenDirectory_Click (object sender, EventArgs e)
 		{
 			String path = "";
@@ -144,6 +171,41 @@ namespace ImageTaggerWinForms
 			}
 		}
 
+		void SaveConfiguration_Click (object sender, EventArgs e)
+		{
+			// ToDo: Handle errors
+			
+			String basePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+			String applicationName = Application.ProductName;
+			String folder = Path.Combine(basePath, applicationName);
+			
+			if(!Directory.Exists(folder))
+			{
+				Directory.CreateDirectory(folder);	
+			};
+			
+			String path = Path.Combine(folder, ".ImageTagger.config");
+			this.config.Save(path);
+			MessageBox.Show("Configuration saved to: " + path);
+		}
+		
+		void LoadConfiguration_Click (object sender, EventArgs e)
+		{
+			// ToDo: Handle errors
+			
+			String basePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+			String applicationName = Application.ProductName;
+			String folder = Path.Combine(basePath, applicationName);
+			
+			String path = Path.Combine(folder, ".ImageTagger.config");
+			this.config = Configuration.Load(path);
+			MessageBox.Show("Configuration loaded from: " + path);
+		}
+		
+		#endregion
+		
+		#region About menu handler
+		
 		void OpenFeedback_Click (object sender, EventArgs e)
 		{
 			String feedbackText =
@@ -193,17 +255,55 @@ modification, are permitted provided that the following conditions are met:
 			MessageBox.Show(licenceText, "Image-Tagger licence (BSD-2-Clause)");	
 		}
 		
+		#endregion
+		
 		public bool CheckExtension (String extension)
 		{
-			String lowerExtension = extension.ToLower ();
+			String modifiedExtension;
+			if(config.CheckExtensionsCaseSensitive)
+			{
+				modifiedExtension = extension;
+			}
+			else
+			{
+				modifiedExtension = extension.ToLower ();
+			}
 			
-			if (lowerExtension == ".jpg" || lowerExtension == ".jpeg" || lowerExtension == ".png" || lowerExtension == ".tif" || lowerExtension == ".tiff") {
+			if (config.ValidExtensions != null && config.ValidExtensions.Contains(modifiedExtension)) {
 				return true;
 			} else {
 				return false;
 			}
 		}
-
+		#region Navigation handler
+		
+		private void HandleKeyPress (Object sender, KeyPressEventArgs e)
+		{
+			var keys = config.Navigation;
+			
+			// The keypressed method uses the KeyChar property to check 
+			// whether the ENTER key is pressed.  
+			
+			// If the ENTER key is pressed, the Handled property is set to true, 
+			// to indicate the event is handled.
+			if (e.KeyChar == keys.PreviousImage) {
+				imageBrowser.PreviousImage();
+				e.Handled = true;
+			}
+			else if (e.KeyChar == keys.NextImage) {
+				imageBrowser.NextImage();
+				e.Handled = true;
+			}
+			else if (e.KeyChar == keys.PreviousPage) {
+				imageBrowser.PreviousPage();
+				e.Handled = true;
+			}
+			else if (e.KeyChar == keys.NextPage) {
+				imageBrowser.NextPage();
+				e.Handled = true;
+			}
+		}
+		
 		void HandleImage1Click (object sender, ImageClickEventArgs e)
 		{
 			if (e != null && e.Information != null && !String.IsNullOrEmpty (e.Information.Path)) {
@@ -212,5 +312,7 @@ modification, are permitted provided that the following conditions are met:
 				mainImage.Image = e.Thumbnail;
 			}
 		}
+		
+		#endregion
 	}
 }

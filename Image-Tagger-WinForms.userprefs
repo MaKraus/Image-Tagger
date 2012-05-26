@@ -3,10 +3,13 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" ctype="Workspace" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Image-Tagger-WinForms/ImageTagger.cs" ctype="Workbench">
     <Files>
-      <File FileName="Image-Tagger-WinForms/ImageTagger.cs" Line="149" Column="25" />
+      <File FileName="Image-Tagger-WinForms/ImageTagger.cs" Line="194" Column="26" />
       <File FileName="Image-Tagger-WinForms/ImageBrowser.cs" Line="77" Column="69" />
       <File FileName="Image-Tagger-WinForms/Program.cs" Line="20" Column="1" />
       <File FileName="Image-Tagger-WinForms/ImageInformation.cs" Line="1" Column="1" />
+      <File FileName="Image-Tagger-WinForms/Configuration/ConfigurationNavigation.cs" Line="6" Column="15" />
+      <File FileName="Image-Tagger-WinForms/Configuration/Configuration.cs" Line="20" Column="4" />
+      <File FileName="Image-Tagger-WinForms/AssemblyInfo.cs" Line="10" Column="31" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
