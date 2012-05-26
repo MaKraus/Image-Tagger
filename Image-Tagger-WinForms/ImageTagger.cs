@@ -10,8 +10,8 @@ namespace ImageTaggerWinForms
 	{
 		private System.ComponentModel.IContainer components = null;
 
-		Configuration config = new Configuration();
-		
+		Configuration config = new Configuration ();
+
 		ImageBrowser imageBrowser;
 		PictureBox mainImage = new PictureBox ();
 
@@ -29,8 +29,11 @@ namespace ImageTaggerWinForms
 
 		public ImageTagger ()
 		{
+			LoadingScreen loadingScreen = new LoadingScreen();
+			loadingScreen.Show();
+			
 			// Configuration
-			config = GetDefaultConfiguration();
+			config = GetConfiguration ();
 			
 			// Window properties
 			this.components = new System.ComponentModel.Container ();
@@ -40,7 +43,7 @@ namespace ImageTaggerWinForms
 			this.Text = "Image-Tagger Playground";
 			
 			this.KeyPreview = true;
-			this.KeyPress += new KeyPressEventHandler(HandleKeyPress);
+			this.KeyPress += new KeyPressEventHandler (HandleKeyPress);
 			
 			// Create Menu
 			CreateMenuStrip ();
@@ -61,33 +64,30 @@ namespace ImageTaggerWinForms
 			leftRightSplitter.Panel1.Controls.Add (imageBrowser);
 			imageBrowser.ImageClick += HandleImage1Click;
 			
+			if(!String.IsNullOrEmpty(config.DefaultDirectory))
+			{
+				OpenDirectory(config.DefaultDirectory);	
+			}
+			
 			// Panel 2
 			mainImage.Dock = DockStyle.Fill;
 			mainImage.SizeMode = PictureBoxSizeMode.Zoom;
 			
 			leftRightSplitter.Panel2.Controls.Add (mainImage);
+			
+			loadingScreen.Hide();
 		}
-		
-		public Configuration GetDefaultConfiguration()
+
+		public Configuration GetConfiguration ()
 		{
-			var config = new Configuration()
-			{
-				CheckExtensionsCaseSensitive = false,
-				ValidExtensions = new List<String>()
-				{
-					".jpg", ".jpeg", ".png", ".tiff", ".gif"
-				},
-				Navigation = new ConfigurationNavigation()
-				{
-					PreviousImage = 'a',
-					NextImage = 'd',
-					PreviousPage = 'w',
-					NextPage = 's'
-				}
-			};
-			return config;
+			try {
+				return LoadConfiguration();
+			} catch (IOException) {
+				var config = new Configuration { CheckExtensionsCaseSensitive = false, ValidExtensions = new List<String> { ".jpg", ".jpeg", ".png", ".tiff", ".gif" }, Navigation = new ConfigurationNavigation { PreviousImage = 'a', NextImage = 'd', PreviousPage = 'w', NextPage = 's' } };
+				return config;
+			}					
 		}
-		
+
 		protected void CreateMenuStrip ()
 		{
 			// Main Menu
@@ -111,40 +111,40 @@ namespace ImageTaggerWinForms
 			file.DropDownItems.Add (SaveConfiguration);
 			
 			// Navigation Menu
-			ToolStripMenuItem navigation = new ToolStripMenuItem("Navigation");
-			MainMenu.Items.Add(navigation);
+			ToolStripMenuItem navigation = new ToolStripMenuItem ("Navigation");
+			MainMenu.Items.Add (navigation);
 			
-			ToolStripMenuItem previousImage = new ToolStripMenuItem("Previous Image");
-			navigation.DropDownItems.Add(previousImage);
+			ToolStripMenuItem previousImage = new ToolStripMenuItem ("Previous Image");
+			navigation.DropDownItems.Add (previousImage);
 			
-			ToolStripMenuItem nextImage = new ToolStripMenuItem("Next Image");
-			navigation.DropDownItems.Add(nextImage);
+			ToolStripMenuItem nextImage = new ToolStripMenuItem ("Next Image");
+			navigation.DropDownItems.Add (nextImage);
 			
-			ToolStripMenuItem previousPage = new ToolStripMenuItem("Previous Page");
-			navigation.DropDownItems.Add(previousPage);
+			ToolStripMenuItem previousPage = new ToolStripMenuItem ("Previous Page");
+			navigation.DropDownItems.Add (previousPage);
 			
-			ToolStripMenuItem nextPage = new ToolStripMenuItem("Next Page");
-			navigation.DropDownItems.Add(nextPage);
+			ToolStripMenuItem nextPage = new ToolStripMenuItem ("Next Page");
+			navigation.DropDownItems.Add (nextPage);
 			
 			// About Menu
-			ToolStripMenuItem about = new ToolStripMenuItem("About");
-			MainMenu.Items.Add(about);
-
-			ToolStripMenuItem feedback = new ToolStripMenuItem("Feedback / Bugreport");
-			feedback.Click += new EventHandler(OpenFeedback_Click);
-			about.DropDownItems.Add(feedback);
+			ToolStripMenuItem about = new ToolStripMenuItem ("About");
+			MainMenu.Items.Add (about);
 			
-			ToolStripMenuItem source = new ToolStripMenuItem("Source");
-			source.Click += new EventHandler(OpenSource_Click);
-			about.DropDownItems.Add(source);
+			ToolStripMenuItem feedback = new ToolStripMenuItem ("Feedback / Bugreport");
+			feedback.Click += new EventHandler (OpenFeedback_Click);
+			about.DropDownItems.Add (feedback);
 			
-			ToolStripMenuItem licence = new ToolStripMenuItem("Licence");
-			licence.Click += new EventHandler(OpenLicence_Click);
-			about.DropDownItems.Add(licence);
+			ToolStripMenuItem source = new ToolStripMenuItem ("Source");
+			source.Click += new EventHandler (OpenSource_Click);
+			about.DropDownItems.Add (source);
+			
+			ToolStripMenuItem licence = new ToolStripMenuItem ("Licence");
+			licence.Click += new EventHandler (OpenLicence_Click);
+			about.DropDownItems.Add (licence);
 		}
 
 		#region File menu handler
-		
+
 		void OpenDirectory_Click (object sender, EventArgs e)
 		{
 			String path = "";
@@ -157,79 +157,54 @@ namespace ImageTaggerWinForms
 				this.Close ();
 			}
 			
-			DirectoryInfo imageDir = new DirectoryInfo (path);
-			var files = imageDir.GetFiles ("*", SearchOption.AllDirectories);
-			
-			imageBrowser.Clear ();
-			foreach (var file in files) {
-				if (!CheckExtension (file.Extension)) {
-					continue;
-				}
-				
-				imageBrowser.Add (file);
-				Application.DoEvents ();
-			}
+			OpenDirectory(path);
 		}
 
 		void SaveConfiguration_Click (object sender, EventArgs e)
 		{
-			// ToDo: Handle errors
-			
-			String basePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-			String applicationName = Application.ProductName;
-			String folder = Path.Combine(basePath, applicationName);
-			
-			if(!Directory.Exists(folder))
-			{
-				Directory.CreateDirectory(folder);	
-			};
-			
-			String path = Path.Combine(folder, ".ImageTagger.config");
-			this.config.Save(path);
-			MessageBox.Show("Configuration saved to: " + path);
+			try {
+				SaveConfiguration ();
+				MessageBox.Show ("Configuration saved");
+			} catch (IOException) {
+				MessageBox.Show ("Error saving configuration");
+			}
 		}
-		
+
 		void LoadConfiguration_Click (object sender, EventArgs e)
 		{
-			// ToDo: Handle errors
-			
-			String basePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-			String applicationName = Application.ProductName;
-			String folder = Path.Combine(basePath, applicationName);
-			
-			String path = Path.Combine(folder, ".ImageTagger.config");
-			this.config = Configuration.Load(path);
-			MessageBox.Show("Configuration loaded from: " + path);
+			try {
+				config = LoadConfiguration ();
+				MessageBox.Show ("Configuration loaded");
+			} catch (IOException) {
+				MessageBox.Show ("Error loading configuration");
+			}
 		}
-		
+
 		#endregion
-		
+
 		#region About menu handler
-		
+
 		void OpenFeedback_Click (object sender, EventArgs e)
 		{
-			String feedbackText =
-@"I'm happy to get feedback about this product. 
+			String feedbackText = @"I'm happy to get feedback about this product. 
 Please use the issue managment at gitHub to fill in your feedback and bugreports.
 https://github.com/MaKraus/Image-Tagger";
 			
-			MessageBox.Show(feedbackText, "Feedback / Bugreport");
+			MessageBox.Show (feedbackText, "Feedback / Bugreport");
 		}
-		
+
 		void OpenSource_Click (object sender, EventArgs e)
 		{
-			String sourceText =
-@"Image-Tagger source code may be picked up at github. 
+			String sourceText = @"Image-Tagger source code may be picked up at github. 
 Please feel free to contribute.
 https://github.com/MaKraus/Image-Tagger";
 			
-			MessageBox.Show(sourceText, "Image-Tagger source code (gitHub)");
+			MessageBox.Show (sourceText, "Image-Tagger source code (gitHub)");
 		}
-		
+
 		void OpenLicence_Click (object sender, EventArgs e)
 		{
-			String licenceText = 
-@"Copyright (c) 2012, MaKraus & Contributors
+			String licenceText = @"Copyright (c) 2012, MaKraus & Contributors
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -252,31 +227,13 @@ modification, are permitted provided that the following conditions are met:
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ";
-			MessageBox.Show(licenceText, "Image-Tagger licence (BSD-2-Clause)");	
+			MessageBox.Show (licenceText, "Image-Tagger licence (BSD-2-Clause)");
 		}
-		
+
 		#endregion
-		
-		public bool CheckExtension (String extension)
-		{
-			String modifiedExtension;
-			if(config.CheckExtensionsCaseSensitive)
-			{
-				modifiedExtension = extension;
-			}
-			else
-			{
-				modifiedExtension = extension.ToLower ();
-			}
-			
-			if (config.ValidExtensions != null && config.ValidExtensions.Contains(modifiedExtension)) {
-				return true;
-			} else {
-				return false;
-			}
-		}
+
 		#region Navigation handler
-		
+
 		private void HandleKeyPress (Object sender, KeyPressEventArgs e)
 		{
 			var keys = config.Navigation;
@@ -287,23 +244,20 @@ modification, are permitted provided that the following conditions are met:
 			// If the ENTER key is pressed, the Handled property is set to true, 
 			// to indicate the event is handled.
 			if (e.KeyChar == keys.PreviousImage) {
-				imageBrowser.PreviousImage();
+				imageBrowser.PreviousImage ();
 				e.Handled = true;
-			}
-			else if (e.KeyChar == keys.NextImage) {
-				imageBrowser.NextImage();
+			} else if (e.KeyChar == keys.NextImage) {
+				imageBrowser.NextImage ();
 				e.Handled = true;
-			}
-			else if (e.KeyChar == keys.PreviousPage) {
-				imageBrowser.PreviousPage();
+			} else if (e.KeyChar == keys.PreviousPage) {
+				imageBrowser.PreviousPage ();
 				e.Handled = true;
-			}
-			else if (e.KeyChar == keys.NextPage) {
-				imageBrowser.NextPage();
+			} else if (e.KeyChar == keys.NextPage) {
+				imageBrowser.NextPage ();
 				e.Handled = true;
 			}
 		}
-		
+
 		void HandleImage1Click (object sender, ImageClickEventArgs e)
 		{
 			if (e != null && e.Information != null && !String.IsNullOrEmpty (e.Information.Path)) {
@@ -312,7 +266,63 @@ modification, are permitted provided that the following conditions are met:
 				mainImage.Image = e.Thumbnail;
 			}
 		}
-		
+
 		#endregion
+
+		public bool CheckExtension (String extension)
+		{
+			String modifiedExtension;
+			if (config.CheckExtensionsCaseSensitive) {
+				modifiedExtension = extension;
+			} else {
+				modifiedExtension = extension.ToLower ();
+			}
+			
+			if (config.ValidExtensions != null && config.ValidExtensions.Contains (modifiedExtension)) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		public void SaveConfiguration ()
+		{
+			String basePath = Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData);
+			String applicationName = Application.ProductName;
+			String folder = Path.Combine (basePath, applicationName);
+			
+			if (!Directory.Exists (folder)) {
+				Directory.CreateDirectory (folder);
+			}
+			
+			String path = Path.Combine (folder, ".ImageTagger.config");
+			this.config.Save (path);
+		}
+
+		public Configuration LoadConfiguration ()
+		{
+			String basePath = Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData);
+			String applicationName = Application.ProductName;
+			String folder = Path.Combine (basePath, applicationName);
+			
+			String path = Path.Combine (folder, ".ImageTagger.config");
+			return config = Configuration.Load (path);
+		}
+		
+		public void OpenDirectory(String path)
+		{
+			DirectoryInfo imageDir = new DirectoryInfo (path);
+			var files = imageDir.GetFiles ("*", SearchOption.AllDirectories);
+			
+			imageBrowser.Clear ();
+			foreach (var file in files) {
+				if (!CheckExtension (file.Extension)) {
+					continue;
+				}
+				
+				imageBrowser.Add (file);
+				Application.DoEvents ();
+			}	
+		}
 	}
 }

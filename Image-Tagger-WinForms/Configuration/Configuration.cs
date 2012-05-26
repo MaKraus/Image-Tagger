@@ -8,6 +8,7 @@ namespace ImageTaggerWinForms
 	{
 		public List<String> ValidExtensions { get; set; }
 		public bool CheckExtensionsCaseSensitive { get; set; }
+		public String DefaultDirectory { get; set; }
 		
 		public ConfigurationNavigation Navigation { get; set; }
 		
@@ -22,7 +23,6 @@ namespace ImageTaggerWinForms
 		    var serializer = new XmlSerializer(this.GetType());
     		serializer.Serialize(objStreamWriter, this);
     		objStreamWriter.Close();
-			
 		}
 		
 		public static Configuration Load(String path)

@@ -68,6 +68,7 @@
     <Compile Include="Configuration\Configuration.cs" />
     <Compile Include="Configuration\ConfigurationNavigation.cs" />
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="LoadingScreen.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
