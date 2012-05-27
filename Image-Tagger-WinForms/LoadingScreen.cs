@@ -1,5 +1,7 @@
 using System;
 using System.Windows.Forms;
+using System.Drawing;
+
 namespace ImageTaggerWinForms
 {
 	public class LoadingScreen : Form
@@ -8,10 +10,11 @@ namespace ImageTaggerWinForms
 		{
 			this.Text = "Image-Tagger: Loading...";
 			
-			TextBox box = new TextBox();
-			box.Text = "Please wait while loading...";
-			box.Dock = DockStyle.Fill;
-			this.Controls.Add(box);
+			var label = new Label();
+			label.Text = "Please wait while loading...";
+			label.Dock = DockStyle.Fill;
+			label.TextAlign = ContentAlignment.MiddleCenter;
+			this.Controls.Add(label);
 		}
 	}
 }

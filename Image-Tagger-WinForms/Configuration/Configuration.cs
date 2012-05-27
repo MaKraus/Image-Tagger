@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
+using System.Drawing;
 namespace ImageTaggerWinForms
 {
 	public class Configuration
@@ -9,6 +10,7 @@ namespace ImageTaggerWinForms
 		public List<String> ValidExtensions { get; set; }
 		public bool CheckExtensionsCaseSensitive { get; set; }
 		public String DefaultDirectory { get; set; }
+		public Size WindowSize { get; set; }
 		
 		public ConfigurationNavigation Navigation { get; set; }
 		

@@ -38,12 +38,17 @@ namespace ImageTaggerWinForms
 			// Window properties
 			this.components = new System.ComponentModel.Container ();
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Width = 1200;
-			this.Height = 850;
 			this.Text = "Image-Tagger Playground";
+
+			if(config.WindowSize.Width != 0 && config.WindowSize.Height != 0)
+			{
+				this.Width = config.WindowSize.Width;
+				this.Height = config.WindowSize.Height;
+			}
 			
 			this.KeyPreview = true;
 			this.KeyPress += new KeyPressEventHandler (HandleKeyPress);
+			this.Resize += new EventHandler(Form_Resize);
 			
 			// Create Menu
 			CreateMenuStrip ();
@@ -83,7 +88,13 @@ namespace ImageTaggerWinForms
 			try {
 				return LoadConfiguration();
 			} catch (IOException) {
-				var config = new Configuration { CheckExtensionsCaseSensitive = false, ValidExtensions = new List<String> { ".jpg", ".jpeg", ".png", ".tiff", ".gif" }, Navigation = new ConfigurationNavigation { PreviousImage = 'a', NextImage = 'd', PreviousPage = 'w', NextPage = 's' } };
+				var config = new Configuration 
+				{ 
+					CheckExtensionsCaseSensitive = false, 
+					ValidExtensions = new List<String> { ".jpg", ".jpeg", ".png", ".tiff", ".gif" }, 
+					Navigation = new ConfigurationNavigation { PreviousImage = 'a', NextImage = 'd', PreviousPage = 'w', NextPage = 's' },
+					WindowSize = new Size(1253, 810)			
+				};
 				return config;
 			}					
 		}
@@ -143,6 +154,15 @@ namespace ImageTaggerWinForms
 			about.DropDownItems.Add (licence);
 		}
 
+		#region Main Form Events
+		
+		#endregion
+		
+		void Form_Resize (object sender, EventArgs e)
+		{
+			config.WindowSize = new Size(this.Width, this.Height);
+		}
+		
 		#region File menu handler
 
 		void OpenDirectory_Click (object sender, EventArgs e)
