@@ -9,8 +9,26 @@ Using Mono, C#, WinForms, MSBuild 2010 Project
 
 Read more at http://linuxunddotnet.wordpress.com/ (German)
 Follow MaKraus on Twitter: https://twitter.com/#!/TheMaKraus
+Source & Binaries: https://github.com/MaKraus/Image-Tagger/
 
+---
+Binaries:
+---
+
+The /Releases folder does contain binaries for all stable releases.
+The folder Image-Tagger-WinForms/Image-Tagger-WinForms/bin/Debug/ does contain
+the most recent development build for the selected branch.
+
+---
+Configuration file:
+---
+
+On Linux systems the configuration file will be saved as ~/.config/Image-Tagger/Image-Tagger.config,
+where ~/.config/ is configured as "AppData" directory. ~ is a shortcut for users home directory.
+
+---
 Licence:
+---
 
 Copyright (c) 2012, MaKraus & Contributors
 All rights reserved.
