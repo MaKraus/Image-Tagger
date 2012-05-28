@@ -1,14 +1,14 @@
 ﻿<Properties>
   <AuthorInfo Name="MaKraus &amp; Contributors" Email="" Copyright="" ctype="AuthorInformation" />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" ctype="Workspace" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Image-Tagger-WinForms/ImageTagger.cs" ctype="Workbench">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Image-Tagger-WinForms/Configuration/ConfigurationShortcut.cs" ctype="Workbench">
     <Files>
-      <File FileName="Image-Tagger-WinForms/ImageTagger.cs" Line="96" Column="32" />
-      <File FileName="Image-Tagger-WinForms/ImageBrowser.cs" Line="94" Column="20" />
+      <File FileName="Image-Tagger-WinForms/ImageTagger.cs" Line="210" Column="4" />
+      <File FileName="Image-Tagger-WinForms/ImageBrowser.cs" Line="2" Column="5" />
       <File FileName="Image-Tagger-WinForms/Program.cs" Line="20" Column="1" />
       <File FileName="Image-Tagger-WinForms/ImageInformation.cs" Line="1" Column="1" />
-      <File FileName="Image-Tagger-WinForms/Configuration/ConfigurationNavigation.cs" Line="6" Column="15" />
-      <File FileName="Image-Tagger-WinForms/Configuration/Configuration.cs" Line="24" Column="52" />
+      <File FileName="Image-Tagger-WinForms/Configuration/ConfigurationShortcut.cs" Line="9" Column="3" />
+      <File FileName="Image-Tagger-WinForms/Configuration/Configuration.cs" Line="31" Column="32" />
       <File FileName="Image-Tagger-WinForms/AssemblyInfo.cs" Line="10" Column="31" />
       <File FileName="Image-Tagger-WinForms/LoadingScreen.cs" Line="4" Column="1" />
     </Files>

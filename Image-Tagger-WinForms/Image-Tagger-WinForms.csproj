@@ -66,9 +66,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="ImageBrowser.cs" />
     <Compile Include="Configuration\Configuration.cs" />
-    <Compile Include="Configuration\ConfigurationNavigation.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="LoadingScreen.cs" />
+    <Compile Include="Configuration\ConfigurationShortcut.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

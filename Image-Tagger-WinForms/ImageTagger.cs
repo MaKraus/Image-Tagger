@@ -10,7 +10,7 @@ namespace ImageTaggerWinForms
 	{
 		private System.ComponentModel.IContainer components = null;
 
-		Configuration config = new Configuration ();
+		Configuration config;
 
 		ImageBrowser imageBrowser;
 		PictureBox mainImage = new PictureBox ();
@@ -29,8 +29,8 @@ namespace ImageTaggerWinForms
 
 		public ImageTagger ()
 		{
-			LoadingScreen loadingScreen = new LoadingScreen();
-			loadingScreen.Show();
+			LoadingScreen loadingScreen = new LoadingScreen ();
+			loadingScreen.Show ();
 			
 			// Configuration
 			config = GetConfiguration ();
@@ -39,16 +39,15 @@ namespace ImageTaggerWinForms
 			this.components = new System.ComponentModel.Container ();
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Text = "Image-Tagger Playground";
-
-			if(config.WindowSize.Width != 0 && config.WindowSize.Height != 0)
-			{
+			
+			if (config.WindowSize.Width != 0 && config.WindowSize.Height != 0) {
 				this.Width = config.WindowSize.Width;
 				this.Height = config.WindowSize.Height;
 			}
 			
-			this.KeyPreview = true;
-			this.KeyPress += new KeyPressEventHandler (HandleKeyPress);
-			this.Resize += new EventHandler(Form_Resize);
+//			this.KeyPreview = true;
+//			this.KeyPress += new KeyPressEventHandler (HandleKeyPress);
+			this.Resize += new EventHandler (Form_Resize);
 			
 			// Create Menu
 			CreateMenuStrip ();
@@ -58,7 +57,7 @@ namespace ImageTaggerWinForms
 			leftRightSplitter.Dock = DockStyle.Fill;
 			this.Controls.Add (leftRightSplitter);
 			
-			// Panel 1
+			// Panel 1Navigation
 			leftRightSplitter.Panel1MinSize = 210;
 			leftRightSplitter.SplitterDistance = 210;
 			leftRightSplitter.Panel1.BackColor = Color.AntiqueWhite;
@@ -69,9 +68,8 @@ namespace ImageTaggerWinForms
 			leftRightSplitter.Panel1.Controls.Add (imageBrowser);
 			imageBrowser.ImageClick += HandleImage1Click;
 			
-			if(!String.IsNullOrEmpty(config.DefaultDirectory))
-			{
-				OpenDirectory(config.DefaultDirectory);	
+			if (!String.IsNullOrEmpty (config.DefaultDirectory)) {
+				OpenDirectory (config.DefaultDirectory);
 			}
 			
 			// Panel 2
@@ -80,23 +78,31 @@ namespace ImageTaggerWinForms
 			
 			leftRightSplitter.Panel2.Controls.Add (mainImage);
 			
-			loadingScreen.Hide();
+			loadingScreen.Hide ();
 		}
 
 		public Configuration GetConfiguration ()
 		{
-			try {
-				return LoadConfiguration();
-			} catch (IOException) {
-				var config = new Configuration 
-				{ 
-					CheckExtensionsCaseSensitive = false, 
+			var config = LoadConfiguration ();
+			
+			if (config == null) {
+				config = new Configuration 
+				{ CheckExtensionsCaseSensitive = false, 
 					ValidExtensions = new List<String> { ".jpg", ".jpeg", ".png", ".tiff", ".gif" }, 
-					Navigation = new ConfigurationNavigation { PreviousImage = 'a', NextImage = 'd', PreviousPage = 'w', NextPage = 's' },
-					WindowSize = new Size(1253, 810)			
-				};
-				return config;
-			}					
+					Shortcut = new ConfigurationShortcut 
+					{ 
+						// File
+						OpenDirectory = Keys.O,
+						
+						// Navigation
+						PreviousImage = Keys.A, 
+						NextImage = Keys.D, 
+						PreviousPage = Keys.W, 
+						NextPage = Keys.S 
+					}, 
+					WindowSize = new Size (1253, 810) };
+			}
+			return config;
 		}
 
 		protected void CreateMenuStrip ()
@@ -109,32 +115,41 @@ namespace ImageTaggerWinForms
 			ToolStripMenuItem file = new ToolStripMenuItem ("File");
 			MainMenu.Items.Add (file);
 			
-			ToolStripMenuItem OpenDirectory = new ToolStripMenuItem ("Open Directory");
-			OpenDirectory.Click += new EventHandler (OpenDirectory_Click);
-			file.DropDownItems.Add (OpenDirectory);
+			ToolStripMenuItem openDirectory = new ToolStripMenuItem ("Open Directory");
+			openDirectory.ShortcutKeys = (Keys) Keys.Control | config.Shortcut.OpenDirectory;
+			openDirectory.Click += new EventHandler (OpenDirectory_Click);
+			file.DropDownItems.Add (openDirectory);
 			
-			ToolStripMenuItem LoadConfiguration = new ToolStripMenuItem ("Load Configuration");
-			LoadConfiguration.Click += new EventHandler (LoadConfiguration_Click);
-			file.DropDownItems.Add (LoadConfiguration);
+			ToolStripMenuItem loadConfiguration = new ToolStripMenuItem ("Load Configuration");
+			loadConfiguration.Click += new EventHandler (LoadConfiguration_Click);
+			file.DropDownItems.Add (loadConfiguration);
 			
-			ToolStripMenuItem SaveConfiguration = new ToolStripMenuItem ("Save Configuration");
-			SaveConfiguration.Click += new EventHandler (SaveConfiguration_Click);
-			file.DropDownItems.Add (SaveConfiguration);
+			ToolStripMenuItem saveConfiguration = new ToolStripMenuItem ("Save Configuration");
+			saveConfiguration.Click += new EventHandler (SaveConfiguration_Click);
+			file.DropDownItems.Add (saveConfiguration);
 			
 			// Navigation Menu
 			ToolStripMenuItem navigation = new ToolStripMenuItem ("Navigation");
 			MainMenu.Items.Add (navigation);
 			
 			ToolStripMenuItem previousImage = new ToolStripMenuItem ("Previous Image");
+			previousImage.ShortcutKeys = (Keys) Keys.Control | config.Shortcut.PreviousImage;
+			previousImage.Click += new EventHandler (HandlePreviousImage_Click);
 			navigation.DropDownItems.Add (previousImage);
 			
 			ToolStripMenuItem nextImage = new ToolStripMenuItem ("Next Image");
+			nextImage.ShortcutKeys = (Keys) Keys.Control | config.Shortcut.NextImage;
+			nextImage.Click += new EventHandler (HandleNextImage_Click);
 			navigation.DropDownItems.Add (nextImage);
 			
 			ToolStripMenuItem previousPage = new ToolStripMenuItem ("Previous Page");
+			previousPage.ShortcutKeys = (Keys) Keys.Control | config.Shortcut.PreviousPage;
+			previousPage.Click += new EventHandler (HandlePreviousPage_Click);
 			navigation.DropDownItems.Add (previousPage);
 			
 			ToolStripMenuItem nextPage = new ToolStripMenuItem ("Next Page");
+			nextPage.ShortcutKeys = (Keys)  Keys.Control | config.Shortcut.NextPage;
+			nextPage.Click += new EventHandler (HandleNextPage_Click);
 			navigation.DropDownItems.Add (nextPage);
 			
 			// About Menu
@@ -155,14 +170,14 @@ namespace ImageTaggerWinForms
 		}
 
 		#region Main Form Events
-		
+
 		#endregion
-		
+
 		void Form_Resize (object sender, EventArgs e)
 		{
-			config.WindowSize = new Size(this.Width, this.Height);
+			config.WindowSize = new Size (this.Width, this.Height);
 		}
-		
+
 		#region File menu handler
 
 		void OpenDirectory_Click (object sender, EventArgs e)
@@ -177,7 +192,7 @@ namespace ImageTaggerWinForms
 				this.Close ();
 			}
 			
-			OpenDirectory(path);
+			OpenDirectory (path);
 		}
 
 		void SaveConfiguration_Click (object sender, EventArgs e)
@@ -192,10 +207,13 @@ namespace ImageTaggerWinForms
 
 		void LoadConfiguration_Click (object sender, EventArgs e)
 		{
-			try {
-				config = LoadConfiguration ();
+			config = LoadConfiguration ();
+			if(config != null)
+			{
 				MessageBox.Show ("Configuration loaded");
-			} catch (IOException) {
+			} 
+			else 
+			{
 				MessageBox.Show ("Error loading configuration");
 			}
 		}
@@ -254,29 +272,49 @@ modification, are permitted provided that the following conditions are met:
 
 		#region Navigation handler
 
-		private void HandleKeyPress (Object sender, KeyPressEventArgs e)
+		private void HandlePreviousImage_Click (Object sender, EventArgs e)
 		{
-			var keys = config.Navigation;
-			
-			// The keypressed method uses the KeyChar property to check 
-			// whether the ENTER key is pressed.  
-			
-			// If the ENTER key is pressed, the Handled property is set to true, 
-			// to indicate the event is handled.
-			if (e.KeyChar == keys.PreviousImage) {
-				imageBrowser.PreviousImage ();
-				e.Handled = true;
-			} else if (e.KeyChar == keys.NextImage) {
-				imageBrowser.NextImage ();
-				e.Handled = true;
-			} else if (e.KeyChar == keys.PreviousPage) {
-				imageBrowser.PreviousPage ();
-				e.Handled = true;
-			} else if (e.KeyChar == keys.NextPage) {
-				imageBrowser.NextPage ();
-				e.Handled = true;
-			}
+			imageBrowser.PreviousImage ();
 		}
+
+		private void HandleNextImage_Click (Object sender, EventArgs e)
+		{
+			imageBrowser.NextImage ();
+		}
+
+		private void HandlePreviousPage_Click (Object sender, EventArgs e)
+		{
+			imageBrowser.PreviousPage ();
+		}
+
+		private void HandleNextPage_Click (Object sender, EventArgs e)
+		{
+			imageBrowser.NextPage ();
+		}
+
+//		private void HandleKeyPress (Object sender, KeyPressEventArgs e)
+//		{
+//			var keys = config.Navigation;
+//			
+//			// The keypressed method uses the KeyChar property to check 
+//			// whether the ENTER key is pressed.  
+//			
+//			// If the ENTER key is pressed, the Handled property is set to true, 
+//			// to indicate the event is handled.
+//			if (e.KeyChar == keys.PreviousImage) {
+//				imageBrowser.PreviousImage ();
+//				e.Handled = true;
+//			} else if (e.KeyChar == keys.NextImage) {
+//				imageBrowser.NextImage ();
+//				e.Handled = true;
+//			} else if (e.KeyChar == keys.PreviousPage) {
+//				imageBrowser.PreviousPage ();
+//				e.Handled = true;
+//			} else if (e.KeyChar == keys.NextPage) {
+//				imageBrowser.NextPage ();
+//				e.Handled = true;
+//			}
+//		}
 
 		void HandleImage1Click (object sender, ImageClickEventArgs e)
 		{
@@ -328,8 +366,8 @@ modification, are permitted provided that the following conditions are met:
 			String path = Path.Combine (folder, ".ImageTagger.config");
 			return config = Configuration.Load (path);
 		}
-		
-		public void OpenDirectory(String path)
+
+		public void OpenDirectory (String path)
 		{
 			DirectoryInfo imageDir = new DirectoryInfo (path);
 			var files = imageDir.GetFiles ("*", SearchOption.AllDirectories);
@@ -342,7 +380,7 @@ modification, are permitted provided that the following conditions are met:
 				
 				imageBrowser.Add (file);
 				Application.DoEvents ();
-			}	
+			}
 		}
 	}
 }
